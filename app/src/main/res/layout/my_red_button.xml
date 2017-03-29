@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <com.raspiworks.M7Remote.ui.FiringButton xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/fire_label"
+        android:background="@drawable/button_red"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:textSize="25sp"/>

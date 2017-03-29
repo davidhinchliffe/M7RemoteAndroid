@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">M7 Remote</string>
+    <string name="app_label">M7 Remote</string>
+    <string name="button_test">Connect</string>
+    <string name="abort_button">Abort</string>
+    <string name="shutdown_button">Shutdown</string>
+    <string name="reset_button">Reset</string>
+    <string name="fire_label">Fire</string>
+    <string name="status_label">Status</string>
+    <string name="channel_label">Channel</string>
+    <string name="arm_label">Arm</string>
+    <string name="connect_button">Connect</string>
+    <string name="ip_prompt">Enter the M7 Server\'s ip address</string>
+    <string name="next_button">Next</string>
+    <string name="mainActivity">Arm Channels</string>
+    <string name="igniteActivity">Fire Channels</string>
+    <string name="Settings_title">Settings</string>
+    <string name="powerDown">Power Down Server</string>
+    <string name="header">%1$d channel is armed and ready</string>
+    <string name="header_plural">%1$d channels are armed and ready</string>
+    <string name="server_error_timed_out">Server Timed Out</string>
+</resources>
