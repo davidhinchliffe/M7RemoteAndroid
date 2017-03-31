@@ -2,7 +2,7 @@ package com.raspiworks.M7Remote.commands;
 
 /**
  * Interface for the concrete command objects
- * Author: David Hinchliffe <belgoi@gmail.com>
+ * Author: David Hinchliffe <david.hinchliffe@raspiworks.com>
  *
  */
 

@@ -3,7 +3,7 @@ package com.raspiworks.M7Remote.commands;
 /**
  * Concrete implementation of the resetCommand. executes reset on the receiver Server Connection
  *
- * Author: David Hinchliffe <belgoi@gmail.com>
+ * Author: David Hinchliffe <david.hinchliffe@raspiworks.com>
  */
 
 import com.raspiworks.M7Remote.serverconnection.ServerConnectionFactoryInterface;

@@ -2,7 +2,7 @@ package com.raspiworks.M7Remote.ui;
 
 /**
  * Interface for the OnSetMaxChannel callback
- * Author: David Hinchliffe <belgoi@gmail.com>
+ * Author: David Hinchliffe <david.hinchliffe@raspiworks.com>
  */
 
 public interface OnSetMaxChannelsListener{

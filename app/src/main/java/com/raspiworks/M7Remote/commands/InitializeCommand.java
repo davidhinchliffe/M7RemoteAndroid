@@ -1,17 +1,16 @@
-package com.raspiworks.M7Remote.commands;
-
 /**
  * Concrete implementation of the initialize command. Invokes the execute command on the receiver,
  * ServerConnection
  *
- *  Author: David Hinchliffe <belgoi@gmail.com>
+ *  Author: David Hinchliffe <david.hinchliffe@raspiworks.com>
  */
+package com.raspiworks.M7Remote.commands;
 
+import com.raspiworks.M7Remote.invoker.M7ServerCommandInvoker;
 import com.raspiworks.M7Remote.serverconnection.ServerConnectionFactoryInterface;
-import com.raspiworks.M7Remote.invoker.M7ServerController;
 
 public class InitializeCommand implements RemoteCommand {
-    private M7ServerController controller;
+    private M7ServerCommandInvoker controller;
     private ServerConnectionFactoryInterface serverConnection;
 
     public InitializeCommand(ServerConnectionFactoryInterface serverConnection)

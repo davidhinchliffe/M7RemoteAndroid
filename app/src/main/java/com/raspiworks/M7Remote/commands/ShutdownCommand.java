@@ -3,7 +3,7 @@ import com.raspiworks.M7Remote.serverconnection.ServerConnectionFactoryInterface
 
 /**
  * Defines the shutdown Command
- * Author: David Hinchliffe
+ * Author: David Hinchliffe <david.hinchliffe@raspiworks.com>
  */
 
 

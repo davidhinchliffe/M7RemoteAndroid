@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 
 import com.raspiworks.M7Remote.commands.ShutdownCommand;
+import com.raspiworks.M7Remote.invoker.M7ServerCommandInvoker;
 import com.raspiworks.M7Remote.serverconnection.ServerConnectionFactory;
 import com.raspiworks.M7Remote.ui.Keyboard;
 import com.raspiworks.M7Remote.ui.OnSetMaxChannelsListener;
@@ -32,7 +33,6 @@ import com.raspiworks.M7Remote.commands.RemoteCommand;
 import com.raspiworks.M7Remote.commands.ResetCommand;
 import com.raspiworks.M7Remote.commands.StatusCommand;
 import com.raspiworks.M7Remote.commands.TestConnectionCommand;
-import com.raspiworks.M7Remote.invoker.M7ServerController;
 import com.raspiworks.M7Remote.ui.UIControls;
 
 
@@ -44,7 +44,7 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
     private String launcherIpAddress=new String();
     private TextView connectMsg;
     private TextView txtHiddenChannelCount;
-    private M7ServerController remote;
+    private M7ServerCommandInvoker invoker;
     private int maxChannels=0;
     private Button buttonConnect;
     private Button buttonNext;
@@ -62,15 +62,13 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
       //  mContext=this;
-        remote=new M7ServerController();
+        invoker =new M7ServerCommandInvoker();
         //find the textView controls and assign them to a variable
         connectMsg=(TextView)findViewById(R.id.connectionMessage);
         buttonConnect=(Button) findViewById(R.id.connectButton);
         buttonNext=(Button) findViewById(R.id.nextButton);
-       // buttonShutdown=(Button)findViewById(R.id.shutdownButton);
         txtHiddenChannelCount=(TextView)findViewById(R.id.hiddenChannelCount);
         buttonNext.setEnabled(false);
-       // buttonShutdown.setEnabled(false);
         txtHiddenChannelCount.setVisibility(View.INVISIBLE);
         txtIpAddress=(EditText)findViewById(R.id.ipAddress);
         //set the Event Handlers
@@ -82,7 +80,7 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
         if(savedInstanceState!=null)
         {
             maxChannels=savedInstanceState.getInt("MaxChannels");
-            remote.setMaxChannels(maxChannels);
+            invoker.setMaxChannels(maxChannels);
             launcherIpAddress=savedInstanceState.getString("ServerIpAddress");
             txtIpAddress.setText(launcherIpAddress);
 
@@ -92,7 +90,6 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
             SharedPreferences preferences=this.getPreferences(MODE_PRIVATE);
             String ipAddress=preferences.getString(IPADDRESS,"");
             if(!ipAddress.isEmpty()){
-                //txtIpAddress=(EditText) findViewById(R.id.ipAddress);
                 txtIpAddress.setText(ipAddress);
             }
 
@@ -154,7 +151,7 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
             setupArmingControls(maxChannels);
         }
     }
-    public void onStop(){
+  /* public void onStop(){
         super.onStop();
         int i=0;
         i++;
@@ -164,9 +161,9 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
         int i=0;
         i++;
 
-    }
+    }*/
     private void prepareRemoteForReset(){
-        remote.reset();
+        invoker.reset();
         buttonConnect.setEnabled(true);
         buttonNext.setEnabled(false);
         txtIpAddress.setFocusable(true);
@@ -178,15 +175,11 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
     private void prepareRemoteForShutdown(){
         //to make certain that the raspberry pi is properly shutdown, the
         //shutdown command needs to be issued so that all provisioned pins
-        //can be put back to the low state. This method is called immediately after
-        //all channels have been fired and can be called from the arming screen if desired
-        //in order to reset the controller
-        remote.shutdown();
+        //can be put back to the low state.
+        invoker.shutdown();
         //enable/disable the buttons
         buttonConnect.setEnabled(true);
         buttonNext.setEnabled(false);
-        //TODO:DELETE FOLLOWING LINE
-        //buttonShutdown.setEnabled(false);
         txtIpAddress.setFocusable(true);
         //have to reset MaxChannels back to zero
         maxChannels=0;
@@ -217,7 +210,7 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
         RemoteCommand shutdown=new ShutdownCommand(shutdownLauncher);
 
         //assign commands to controller
-        remote.setQueryCommands(initialize,reset,test,shutdown);
+        invoker.setQueryCommands(initialize,reset,test,shutdown);
 
     }
     private void setConnectMsgOnTextChanged(){
@@ -242,10 +235,10 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
                     saveIpAddress();
                     //the firing system hasn't been initialized.  This happens upon first connection
                     if (maxChannels == 0)
-                        remote.initialize();
+                        invoker.initialize();
 
                 }
-                //After the remote is reset, the ipAddress field can once again be
+                //After the invoker is reset, the ipAddress field can once again be
                 //modified
                 else if(s.toString().equals("shutdown successful")){
                     txtIpAddress.setFocusableInTouchMode(true);
@@ -314,7 +307,7 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
         //assigned to a variable
         try{
             maxChannels=Integer.parseInt(s);
-            remote.setMaxChannels(maxChannels);
+            invoker.setMaxChannels(maxChannels);
             setupArmingControls(maxChannels);
         }catch(NumberFormatException e){
             maxChannels=0;
@@ -334,7 +327,7 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
                 //assigned to a variable
                 try{
                     maxChannels=Integer.parseInt(text.toString());
-                    remote.setMaxChannels(maxChannels);
+                    invoker.setMaxChannels(maxChannels);
                     setupArmingControls(maxChannels);
                 }catch(NumberFormatException e){
                     maxChannels=0;
@@ -358,7 +351,7 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
                 connectMsg.setText("");
                 initializeQueryCommands();
                 hideKeyBoard();
-                remote.testConnection();
+                invoker.testConnection();
                 Toast toast=Toast.makeText(getApplicationContext(),"Connecting to server", Toast.LENGTH_SHORT);
                 toast.show();
 
@@ -405,9 +398,9 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
 
             //create the arming switch
             ArmingSwitch armingSwitch=new UIControls(this).drawArmingSwitch();
-            //register the OnClickListener for the arming button
+            //OnTextChanged increments/decrements the number of channels armed so the next button can be displayed correctly
             setStatusOnTextChanged(txtStatus,armingSwitch);
-
+            //register the OnClickListener for the arming button
             armingSwitch.setOnCheckedChangeListener(new ArmingSwitchChangeListener());
 
             //create the commands
@@ -415,11 +408,13 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
             DisarmCommand disarmCommand= new DisarmCommand(new ServerConnectionFactory(txtStatus,launcherIpAddress,channel));
             StatusCommand statusCommand=new StatusCommand(new ServerConnectionFactory(txtStatus,launcherIpAddress,channel));
 
-            //attach arm/disarm commands to the arming switch, the commands are called by OnCheckedChangeListener.
-            //the buttons therefore act as the invoker.
-            armingSwitch.setArmCommand(armCommand);
-            armingSwitch.setDisarmCommand(disarmCommand);
-            armingSwitch.setStatusCommand(statusCommand);
+            //setup the invoker
+            invoker.setActionCommands(channel,armCommand,disarmCommand,statusCommand);
+
+            //setup the arming switch with a reference to the invoker and channel so that
+            //the invoker can be called on the OnCheckedChangeListener when button is pressed
+            armingSwitch.setInvoker(invoker);
+            armingSwitch.setChannel(channel);
 
             //add components to the table
             row.addView(channelLabel);
@@ -427,10 +422,8 @@ public class MainActivity extends Activity implements OnSetMaxChannelsListener{
             row.addView(txtStatus);
             channelsTable.addView(row);
 
-            //setup the launch controller
-            remote.setActionCommands(channel,armCommand,disarmCommand,statusCommand);
-            //get the status of the channel and display in txtStatus
-            remote.status(channel);
+
+
         }
 
     }

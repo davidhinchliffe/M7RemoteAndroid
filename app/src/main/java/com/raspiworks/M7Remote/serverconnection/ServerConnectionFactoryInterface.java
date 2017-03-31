@@ -2,7 +2,7 @@ package com.raspiworks.M7Remote.serverconnection;
 
 /**
  * Interface for the ServerConnectionFactory
- * Author: David Hinchliffe <belgoi@gmail.com>
+ * Author: David Hinchliffe <david.hinchliffe@raspiworks.com>
  */
 
 public interface ServerConnectionFactoryInterface {

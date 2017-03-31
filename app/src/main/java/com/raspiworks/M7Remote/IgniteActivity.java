@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.raspiworks.M7Remote.commands.FireCommand;
 import com.raspiworks.M7Remote.commands.RemoteCommand;
 import com.raspiworks.M7Remote.commands.StatusCommand;
-import com.raspiworks.M7Remote.invoker.M7ServerController;
+import com.raspiworks.M7Remote.invoker.M7ServerCommandInvoker;
 import com.raspiworks.M7Remote.serverconnection.ServerConnectionFactory;
 import com.raspiworks.M7Remote.ui.FiringButton;
 import com.raspiworks.M7Remote.ui.FiringButtonOnClickListener;
@@ -29,7 +29,7 @@ import static android.view.Gravity.CENTER;
 public class IgniteActivity extends Activity {
     private String m7IpAddress=new String();
     private int maxChannels=0;
-    private M7ServerController remote;
+    private M7ServerCommandInvoker invoker;
     private int numberOfChannelsArmed=0;
     private Button abortButton;
     private final static int RESPONSE_CODE=0;
@@ -46,8 +46,8 @@ public class IgniteActivity extends Activity {
         if (bundle.containsKey("maxChannels")){
             maxChannels=bundle.getInt("maxChannels");
         }
-        remote=new M7ServerController();
-        remote.setMaxChannels(maxChannels);
+        invoker =new M7ServerCommandInvoker();
+        invoker.setMaxChannels(maxChannels);
     }
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
@@ -82,7 +82,7 @@ public class IgniteActivity extends Activity {
     }
     //executed when the last active channel has been fired. It closes the activity
     //and passes control back to the main activity. It passes back the value "reset"
-    //so the main activity can reset the remote
+    //so the main activity can reset the invoker
     public void finishFiring(){
         Toast toast=Toast.makeText(this,"All channels have been fired",Toast.LENGTH_SHORT);
         toast.show();
@@ -142,7 +142,7 @@ public class IgniteActivity extends Activity {
         });
     }
     //draws the firing buttons and the associated textViews and assigns the commands
-    // to the buttons and the invoker (M7ServerController)
+    // to the buttons and the invoker (M7ServerCommandInvoker)
     public void setupFiringControls(int numberOfChannels){
         TableLayout table=(TableLayout)findViewById(R.id.firingTable);
         numberOfChannelsArmed=maxChannels;
@@ -155,17 +155,23 @@ public class IgniteActivity extends Activity {
             txtChannel.setText(String.format("%d",channel));
 
 
-            //instantiate command objectsa and bind the txtStatus textView with the firing button
+            //instantiate command objects and bind the txtStatus textView with the firing button
             RemoteCommand fireCommand=new FireCommand(new ServerConnectionFactory(txtStatus,m7IpAddress,channel));
             RemoteCommand statusCommand=new StatusCommand(new ServerConnectionFactory(txtStatus,m7IpAddress,channel));
+
+            //add the fireCommand and statusCommad to the invoker
+            invoker.setActionCommands(channel,fireCommand,statusCommand);
 
             //setup the firing button
             FiringButton buttonFire = new FiringButton(this);
             buttonFire.setEnabled(false);
 
-            //attach the fire command to the firing button. the command is called in the OnClickListener
-            //therefore the button acts as the invoker
-            buttonFire.setFireCommand(fireCommand);
+            //create the firing button
+            //give the firing button a reference to the invoker and a channel. The invoker is called in
+            //the OnClickListener
+            buttonFire.setInvoker(invoker);
+            buttonFire.setChannel(channel);
+
             buttonFire.setOnClickListener(new FiringButtonOnClickListener());
             buttonFire.setText(getResources().getString(R.string.fire_label));
             buttonFire.setHeight(new UIControls(this).convertToPixels(40));
@@ -175,15 +181,14 @@ public class IgniteActivity extends Activity {
             buttonFire.setLayoutParams(lp);
             //register the onClickListener for the firing button
             setStatusOnTextChanged(txtStatus,buttonFire);
-            //set the commands with the invoker
-            remote.setActionCommands(channel,fireCommand,statusCommand);
+
             //add views to the table row and add that to the table
             row.addView(txtChannel);
             row.addView(buttonFire);
             row.addView(txtStatus);
             table.addView(row);
             //get the status of the channel. the status is bound to the channel row
-            remote.status(channel);
+            invoker.status(channel);
 
         }
     }

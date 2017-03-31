@@ -5,7 +5,7 @@ package com.raspiworks.M7Remote.serverconnection;
  *  connection to allow a response from the server to be displayed and accomodates commands
  *  that act upon a specific channel
  *
- *  Author: David Hinchliffe <belgoi@gmail.com>
+ *  Author: David Hinchliffe <david.hinchliffe@raspiworks.com>
  */
 
 import android.widget.TextView;

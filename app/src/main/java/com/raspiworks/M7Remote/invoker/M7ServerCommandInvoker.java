@@ -1,15 +1,11 @@
-package com.raspiworks.M7Remote.invoker;
-
 /**
- * M7ServerController is the invoker in the command pattern.  It manages the
+ * M7ServerCommandInvoker is the invoker in the command pattern.  It manages the
  * command objects and is responsible for invoking the execute method when the appropriate command
  * is called.  It decouples the controller from the rest of the command pattern that does the actual work
  *
- * Author: David Hinchliffe <belgoi@gmail.com>
+ * Author: David Hinchliffe <david.hinchliffe@raspiworks.com>
  */
-
-//TODO: CLEAN THIS CLASS UP
-//import android.widget.TextView;
+package com.raspiworks.M7Remote.invoker;
 
 import com.raspiworks.M7Remote.commands.EmptyCommand;
 //import com.raspiworks.M7Remote.serverconnection.ServerConnectionFactoryInterface;
@@ -17,7 +13,7 @@ import com.raspiworks.M7Remote.commands.EmptyCommand;
 //import com.belgoi.raspiworks.UI.onServerResponseListener;
 import com.raspiworks.M7Remote.commands.RemoteCommand;
 
-public class M7ServerController {
+public class M7ServerCommandInvoker {
     private RemoteCommand armCommand[];
     private RemoteCommand disarmCommand[];
     private RemoteCommand fireCommand[];
@@ -29,7 +25,7 @@ public class M7ServerController {
 
 
 
-    public M7ServerController(){
+    public M7ServerCommandInvoker(){
         //initialize all commands to hold a reference to the empty command to avoid
         //null pointers
         initializeCommand=new EmptyCommand();

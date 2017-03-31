@@ -4,7 +4,7 @@ package com.raspiworks.M7Remote.commands;
  * Concrete implementation of the arm command. Invokes the execute command on the receiver,
  * ServerConnection
  *
- *  Author: David Hinchliffe <belgoi@gmail.com>
+ *  Author: David Hinchliffe <david.hinchliffe@raspiworks.com>
  */
 
 import com.raspiworks.M7Remote.serverconnection.ServerConnectionFactoryInterface;

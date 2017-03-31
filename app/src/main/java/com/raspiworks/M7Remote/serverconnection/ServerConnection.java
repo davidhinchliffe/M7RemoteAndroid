@@ -5,7 +5,7 @@ package com.raspiworks.M7Remote.serverconnection;
  * command and updates the status if a textView has been passed once a response is received back from
  * the server. Since it is an AsyncTask a new thread is created so the UI thread isn't affected.
  *
- * Author: David Hinchliffe <belgoi@gmail.com>
+ * Author: David Hinchliffe <david.hinchliffe@raspiworks.com>
  */
 //TODO: CLEAN UP THIS CLASS
 
